@@ -1,0 +1,18 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$("#videoFrame").attr("src",
+			"http://player.twitch.tv/?html5=true&channel=" +
+			location.hash.replace(/\#/g,""));
+	});
+	</script>
+</head>
+<body style="margin: 0px">
+	<iframe frameborder="0"
+		id="videoFrame"
+		style="height: 100vh; width: 100%; background: #000" />
+</body>
+</html>

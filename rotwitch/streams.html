@@ -1,0 +1,160 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+	<script src="twitch.js"></script>
+	<script src="rcunav.js"></script>
+	<script>
+	var links = {
+		self: "https://api.twitch.tv/kraken/streams?offset=0&limit=10",
+		next: "https://api.twitch.tv/kraken/streams?offset=10&limit=10"
+	};
+
+	var fullheight;
+
+	$(window).scroll(function ()
+	{
+		if ($(window).height() + $(window).scrollTop() < $(document).height())
+			return;
+
+		dload(links.next, populate_container);
+	});
+
+	$(document).ready(function() 
+	{
+		fullheight = true;
+		dload(links.self, populate_container);
+	});
+
+	function keydown_handler(e)
+	{
+		switch(e.keyCode) {
+		case 39:
+			rcuNavigator.navigate("right");
+			break;
+		case 37:
+			rcuNavigator.navigate("left");
+			break;
+		case 40:
+			rcuNavigator.navigate("down");
+			break;
+		case 38:
+			rcuNavigator.navigate("up");
+			break;
+		case 13:
+		default:
+			break;
+		}
+	}
+
+	$(document).keydown(keydown_handler);
+
+	function populate_container(data)
+	{
+		var body = $(".container");
+		links = data._links;
+		$.each(data.streams, function(index, value){
+			var ch_name = value.channel.name;
+			var ch_preview = value.preview.medium;
+			var ch_title = value.channel.status;
+			var ch_viewers = value.viewers;
+			var div = toStreamBox(ch_name, ch_preview, ch_title, ch_viewers);
+			body.append(div);
+		})
+
+		if (fullheight)
+			if ($(window).height() >= $(document).height())
+				dload(links.next, populate_container);
+			else
+				fullheight = false;
+
+		rcuNavigator.update();
+	}
+
+	function toStreamBox(ch_name, ch_preview, ch_title, ch_viewers) {
+		var v = "";
+		v+= "<div class='streambox' tabindex=-1>"
+		v+=	"<a href='play.html#" + ch_name + "'>"
+		v+=	"	<img src='" + ch_preview + "' />"
+		v+=	"</a>"
+		v+=	"<div>"
+		v+=	"<div class='streamtitle'>" + ch_title	+ "</div>"
+		v+=	"<div>" + ch_viewers	+ " on " + ch_name + "</div>"
+		v+=	"</div>"
+		v+= "</div>"
+		
+		return v;
+	}
+	</script>
+	<style>
+	.container {
+		display:          block;
+		margin:           auto;
+		text-align:       center;
+	}
+
+	.streambox {
+		width:            320px;
+		text-align:       left;
+		display:          inline-block;
+		margin:           10px;
+		box-shadow:       0 0 5px rgba(0,0,0,0.5);
+	}
+
+	.streambox > div {
+		margin:           10px;
+	}
+
+	.streamtitle {
+		overflow:         hidden;
+		text-overflow:    ellipsis;
+		white-space:      nowrap;
+		font-size:        22px;
+	}
+
+	.menu {
+		width:            100%;
+		height:           56px;
+		background:       #000;
+		box-shadow:       0 0 10px rgba(0, 0, 0, 0.5);
+	}
+
+	.menu ul {
+		list-style:       none;
+	}
+
+	.menu ul li {
+		float:            left;
+		height:           100%;
+		padding:          0px 10px 0px 10px;
+		line-height:      56px;
+	}
+
+	.menu ul li > a {
+		text-decoration:  none;
+		color:            #ffa500;
+		font-size:        24px;
+	}
+
+	.menu ul li > a:hover, .menu ul li > a:focus {
+		background:       #fff;
+		color:            #000;
+	}
+
+	.streambox:hover, .streambox:focus {
+		background:       #000;
+		color:            #fff;
+	}
+	</style>
+</head>
+<body>
+	<div class="menu">
+		<ul>
+			<li><a href="games.html">Games</a></li>
+			<li><a href="streams.html">Streams</a></li>
+		</ul>
+	</div>
+	<div class="container"></div>​
+</body>
+</html>
+
