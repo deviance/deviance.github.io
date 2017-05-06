@@ -40,8 +40,6 @@
 
 	function keydown_handler(e)
 	{
-		var need_handling = false;
-
 		switch(e.keyCode) {
 		case 39:
 			rcuNavigator.navigate("right");
@@ -57,11 +55,8 @@
 			break;
 		case 13:
 		default:
-			need_handling = true;
 			break;
 		}
-
-		return need_handling;
 	}
 
 	$(document).keydown(keydown_handler);
@@ -91,16 +86,11 @@
 	function toGameBox(game_name, game_image, game_viewers, game_channels)
 	{
 		var v = "";
-		v+= "<div class='gamebox' tabindex=-1>"
-		v+=	"<a href='streams.html?game=" + rfc3986Encode(game_name) + "'>"
-		v+=	"	<img src='" + game_image + "' />"
-		v+=	"</a>"
-		v+=	"<div>"
-		v+=		"<div class='gametitle'>" + game_name + "</div>"
-		v+=		"<div class='gameviewers'>" + game_viewers + " viewers" + "</div>"
-		v+=	"</div>"
-		v+= "</div>"
-
+		v+="<a class='gamebox' tabindex=-1 href='streams.html?game=" + rfc3986Encode(game_name) + "'>"
+		v+="	<img src='" + game_image + "' />"
+		v+="	<p class='gametitle'>" + game_name + "</p>"
+		v+="	<p class='gameviewers'>" + game_viewers + " viewers" + "</p>"
+		v+="</a>"
 		return v;
 	}
 
@@ -117,20 +107,15 @@
 		text-align:       left;
 		display:          inline-block;
 		margin:           10px;
-	}
-
-	.gamebox {
+		text-decoration:  none;
 		max-width:        272px;
 		min-width:        100px;
 		box-shadow:       0 0 10px rgba(0,0,0,0.5);
+		color:            #000;
 	}
 
-	.gamebox > div {
-		margin:           10px;
-	}
-
-	.gamebox img {
-		max-width:        100%;
+	.gameviewers {
+		margin:           5px 10px;
 	}
 
 	.gametitle {
@@ -138,10 +123,10 @@
 		text-overflow:    ellipsis;
 		white-space:      nowrap;
 		font-size:        24px;
+		margin:           5px 10px;
 	}
 
 	.menu {
-
 		width:            100%;
 		height:           56px;
 		background:       #000;

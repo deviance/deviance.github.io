@@ -58,7 +58,8 @@
 			var ch_preview = value.preview.medium;
 			var ch_title = value.channel.status;
 			var ch_viewers = value.viewers;
-			var div = toStreamBox(ch_name, ch_preview, ch_title, ch_viewers);
+			var ch_game = value.game;
+			var div = toStreamBox(ch_name, ch_preview, ch_title, ch_viewers, ch_game);
 			body.append(div);
 		})
 
@@ -71,18 +72,13 @@
 		rcuNavigator.update();
 	}
 
-	function toStreamBox(ch_name, ch_preview, ch_title, ch_viewers) {
+	function toStreamBox(ch_name, ch_preview, ch_title, ch_viewers, ch_game) {
 		var v = "";
-		v+= "<div class='streambox' tabindex=-1>"
-		v+=	"<a href='play.html#" + ch_name + "'>"
-		v+=	"	<img src='" + ch_preview + "' />"
-		v+=	"</a>"
-		v+=	"<div>"
-		v+=	"<div class='streamtitle'>" + ch_title	+ "</div>"
-		v+=	"<div>" + ch_viewers	+ " on " + ch_name + "</div>"
-		v+=	"</div>"
-		v+= "</div>"
-		
+		v+="<a class='streambox' tabindex=-1 href='play.html#" + ch_name + "'>"
+		v+="	<img src='" + ch_preview + "' />"
+		v+="	<p class='streamtitle'>" + ch_name	+ "</p>"
+		v+="	<p class='streamviewers'>" + ch_viewers	+ " viewers</p>"
+		v+="</a>"
 		return v;
 	}
 	</script>
@@ -99,10 +95,8 @@
 		display:          inline-block;
 		margin:           10px;
 		box-shadow:       0 0 5px rgba(0,0,0,0.5);
-	}
-
-	.streambox > div {
-		margin:           10px;
+		color:            #000;
+		text-decoration:  none;
 	}
 
 	.streamtitle {
@@ -110,6 +104,11 @@
 		text-overflow:    ellipsis;
 		white-space:      nowrap;
 		font-size:        22px;
+		margin:           5px 10px;
+	}
+
+	.streamviewers {
+		margin:           5px 10px;
 	}
 
 	.menu {
@@ -154,7 +153,7 @@
 			<li><a href="streams.html">Streams</a></li>
 		</ul>
 	</div>
-	<div class="container"></div>​
+	<div class="container"></div>
 </body>
 </html>
 
