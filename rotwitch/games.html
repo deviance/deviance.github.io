@@ -16,12 +16,7 @@
 
 	$(window).scroll(function ()
 	{
-		var winh = $(window).height();
-		var wins = $(window).scrollTop();
-		var doch = $(document).height();
-		console.log(winh, wins, doch);
-
-		if (winh + wins + 1 < doch)
+		if ($(window).height() + $(window).scrollTop() + 1 < $(document).height())
 			return;
 
 		dload(links.next, populate_container);
@@ -29,37 +24,11 @@
 
 	$(document).ready(function()
 	{
-		var winh = $(window).height();
-		var wins = $(window).scrollTop();
-		var doch = $(document).height();
-		console.log("$document.ready: " + winh + " " + wins + " " + doch);
-
 		fullheight = true;
 		dload(links.self, populate_container);
 	});
 
-	function keydown_handler(e)
-	{
-		switch(e.keyCode) {
-		case 39:
-			rcuNavigator.navigate("right");
-			break;
-		case 37:
-			rcuNavigator.navigate("left");
-			break;
-		case 40:
-			rcuNavigator.navigate("down");
-			break;
-		case 38:
-			rcuNavigator.navigate("up");
-			break;
-		case 13:
-		default:
-			break;
-		}
-	}
-
-	$(document).keydown(keydown_handler);
+	$(document).keydown(rcuNavigator.keydown_handler);
 
 	function populate_container(data)
 	{

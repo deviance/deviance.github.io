@@ -1,165 +1,186 @@
-var rcuMenuItems = {
-	idx: 0,
-	count: 0,
-	items: {},
-	update: function() {
-		/* This is a menu. It is initialized once and
-		* does not get updated. */
-		if (this.count > 0)
-			return;
+var rcuNavigator = (function() {
+	var rcuMenuItems = {
+		idx: 0,
+		count: 0,
+		items: {},
+		update: function() {
+			/* This is a menu. It is initialized once and
+			* does not get updated. */
+			if (this.count > 0)
+				return;
 
-		this.items = $(".menu > ul > li > a");
-		this.count = this.items.length;
-		this.idx = 0;
-	},
-	navigate: function(direction) {
-		switch (direction) {
-		case "left":
-			if (this.idx > 0)
-				this.idx--;
-			break;
-		case "right":
-			if (this.idx < this.count - 1)
-				this.idx++;
-			break;
-		case "down":
-			/* A value that means that focus moved
-			* to the bottom. */
-			return -1;
-		case "up":
-		case "none":
-		default:
-			break;
-		}
-
-		return this.idx;
-	},
-	focus: function(idx) {
-		var i = idx ? idx : this.idx;
-		this.items.eq(i).focus();
-	}
-};
-
-var rcuGameItems = {
-	idx: 0,
-	count: 0,
-	nr_items_in_row: 0,
-	items: {},
-	update: function() {
-		this.items = $(".container > .gamebox, \
-				.container > .streambox");
-		this.count = this.items.length;
-		this.idx = 0;
-	},
-	calc_items_in_row: function() {
-		var first_item = this.items.first();
-		var x = first_item.parent().width();
-		var y = first_item.outerWidth(true);
-
-		this.nr_items_in_row = Math.floor(x / y);
-	},
-	curr_idx_leftmost: function() {
-		var leftmost = false;
-
-		if (!this.idx && (this.nr_items_in_row == 1))
-			leftmost = true;
-		else
-			leftmost = (this.idx % this.nr_items_in_row) == 0;
-
-		return leftmost;
-	},
-	curr_idx_rightmost: function() {
-		var rightmost = false;
-
-		if (!this.idx && (this.nr_items_in_row == 1))
-			rightmost = true;
-		else if (this.idx == this.count - 1)
-			rightmost = true;
-		else
-			rightmost = ((this.idx + 1) % this.nr_items_in_row) == 0;
-
-		return rightmost;
-	},
-	navigate: function(direction) {
-		this.calc_items_in_row();
-
-		var leftmost = this.curr_idx_leftmost();
-		var rightmost = this.curr_idx_rightmost();
-
-		switch (direction) {
-		case "right":
-			/* I want the cursor run only to the end of the row. */
-			if (!rightmost)
-				this.idx++;
-			break;
-		case "left":
-			/* I do not want to jump to previous row. */
-			if (!leftmost)
-				this.idx--;
-			break;
-		case "up":
-			if ((this.idx - this.nr_items_in_row) >= 0)
-				this.idx = this.idx - this.nr_items_in_row;
-			else
+			this.items = $(".menu > ul > li > a");
+			this.count = this.items.length;
+			this.idx = 0;
+		},
+		navigate: function(direction) {
+			switch (direction) {
+			case "left":
+				if (this.idx > 0)
+					this.idx--;
+				break;
+			case "right":
+				if (this.idx < this.count - 1)
+					this.idx++;
+				break;
+			case "down":
 				/* A value that means that focus moved
-				* to the top. */
-				return -2;
-			break;
-		case "down":
-			if ((this.idx + this.nr_items_in_row) < this.count)
-				this.idx = this.idx + this.nr_items_in_row;
-			break;
-		case "none":
-		default:
-			break;
+				* to the bottom. */
+				return -1;
+			case "up":
+			case "none":
+			default:
+				break;
+			}
+
+			return this.idx;
+		},
+		focus: function(idx) {
+			var i = idx ? idx : this.idx;
+			this.items.eq(i).focus();
 		}
+	};
 
-		return this.idx;
-	},
-	focus: function(idx) {
-		var i = idx ? idx : this.idx;
-		this.items.eq(i).focus();
-	}
-};
+	var rcuGameItems = {
+		idx: 0,
+		count: 0,
+		nr_items_in_row: 0,
+		items: {},
+		update: function() {
+			this.items = $(".container > .gamebox, \
+					.container > .streambox");
+			this.count = this.items.length;
+			this.idx = 0;
+		},
+		calc_items_in_row: function() {
+			var first_item = this.items.first();
+			var x = first_item.parent().width();
+			var y = first_item.outerWidth(true);
 
-var rcuNavigator = {
-	items: [rcuMenuItems, rcuGameItems],
-	in_charge_idx: -1,
-	update: function() {
-		this.in_charge_idx = -1;
-		this.items.forEach(function(item) {
-			item.update();
-		});
-	},
-	first_move: function() {
-		return (this.in_charge_idx == -1);
-	},
-	navigate: function(direction) {
-		if (this.first_move()) {
+			this.nr_items_in_row = Math.floor(x / y);
+		},
+		curr_idx_leftmost: function() {
+			var leftmost = false;
 
-			if (direction == "up") {
-				/* Pressed Up for the first time. Focus first Menu
-				* item. */
-				this.in_charge_idx = 0;
-			} else
-				this.in_charge_idx = 1;
-			/* Do not actually go any direction, focus first item. */
-			direction = "none";
+			if (!this.idx && (this.nr_items_in_row == 1))
+				leftmost = true;
+			else
+				leftmost = (this.idx % this.nr_items_in_row) == 0;
+
+			return leftmost;
+		},
+		curr_idx_rightmost: function() {
+			var rightmost = false;
+
+			if (!this.idx && (this.nr_items_in_row == 1))
+				rightmost = true;
+			else if (this.idx == this.count - 1)
+				rightmost = true;
+			else
+				rightmost = ((this.idx + 1) % this.nr_items_in_row) == 0;
+
+			return rightmost;
+		},
+		navigate: function(direction) {
+			this.calc_items_in_row();
+
+			var leftmost = this.curr_idx_leftmost();
+			var rightmost = this.curr_idx_rightmost();
+
+			switch (direction) {
+			case "right":
+				/* I want the cursor run only to the end of the row. */
+				if (!rightmost)
+					this.idx++;
+				break;
+			case "left":
+				/* I do not want to jump to previous row. */
+				if (!leftmost)
+					this.idx--;
+				break;
+			case "up":
+				if ((this.idx - this.nr_items_in_row) >= 0)
+					this.idx = this.idx - this.nr_items_in_row;
+				else
+					/* A value that means that focus moved
+					* to the top. */
+					return -2;
+				break;
+			case "down":
+				if ((this.idx + this.nr_items_in_row) < this.count)
+					this.idx = this.idx + this.nr_items_in_row;
+				break;
+			case "none":
+			default:
+				break;
+			}
+
+			return this.idx;
+		},
+		focus: function(idx) {
+			var i = idx ? idx : this.idx;
+			this.items.eq(i).focus();
 		}
+	};
 
-		var item_in_charge = this.items[this.in_charge_idx];
-		var dropped_out = item_in_charge.navigate(direction);
+	return {
+		items: [rcuMenuItems, rcuGameItems],
+		in_charge_idx: -1,
+		update: function() {
+			this.in_charge_idx = -1;
+			this.items.forEach(function(item) {
+				item.update();
+			});
+		},
+		first_move: function() {
+			return (this.in_charge_idx == -1);
+		},
+		navigate: function(direction) {
+			if (this.first_move()) {
 
-		if (dropped_out == -1)
-			item_in_charge = this.items[++this.in_charge_idx];
-		else if (dropped_out == -2)
-			item_in_charge = this.items[--this.in_charge_idx];
+				if (direction == "up") {
+					/* Pressed Up for the first time. Focus first Menu
+					* item. */
+					this.in_charge_idx = 0;
+				} else
+					this.in_charge_idx = 1;
+				/* Do not actually go any direction, focus first item. */
+				direction = "none";
+			}
 
-		item_in_charge.focus();
-	},
-	unfocus: function() {
-		if (this.in_charge_idx < 0)
-			return;
-		$(":focus").blur();
+			var item_in_charge = this.items[this.in_charge_idx];
+			var dropped_out = item_in_charge.navigate(direction);
+
+			if (dropped_out == -1)
+				item_in_charge = this.items[++this.in_charge_idx];
+			else if (dropped_out == -2)
+				item_in_charge = this.items[--this.in_charge_idx];
+
+			item_in_charge.focus();
+		},
+		unfocus: function() {
+			if (this.in_charge_idx < 0)
+				return;
+			$(":focus").blur();
+		},
+		keydown_handler: function(e) {
+			switch(e.keyCode) {
+			case 39:
+				rcuNavigator.navigate("right");
+				break;
+			case 37:
+				rcuNavigator.navigate("left");
+				break;
+			case 40:
+				rcuNavigator.navigate("down");
+				break;
+			case 38:
+				rcuNavigator.navigate("up");
+				break;
+			case 13:
+			default:
+				break;
+			}
+		}
 	}
-}
+})();
