@@ -1,6 +1,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<!-- v1.4.3 has a working $(window).scrollTop() -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 	<script src="twitch.js"></script>
 	<script src="rcunav.js"></script>
@@ -10,11 +11,9 @@
 		next: "https://api.twitch.tv/kraken/streams?offset=10&limit=10"
 	};
 
-	var fullheight;
-
 	$(window).scroll(function ()
 	{
-		if ($(window).height() + $(window).scrollTop() < $(document).height())
+		if ($(window).height() + $(window).scrollTop() + 1 < $(document).height())
 			return;
 
 		dload(links.next, populate_container);
@@ -22,8 +21,7 @@
 
 	$(document).ready(function() 
 	{
-		fullheight = true;
-		dload(links.self, populate_container);
+		dload(links.self, populate_container, { fullheight: true });
 	});
 
 	$(document).keydown(rcuNavigator.keydown_handler);
@@ -37,16 +35,10 @@
 			var ch_preview = value.preview.medium;
 			var ch_title = value.channel.status;
 			var ch_viewers = value.viewers;
-			var ch_game = value.game;
+			var ch_game = " " + value.video_height + "p" + value.average_fps;
 			var div = toStreamBox(ch_name, ch_preview, ch_title, ch_viewers, ch_game);
 			body.append(div);
 		})
-
-		if (fullheight)
-			if ($(window).height() >= $(document).height())
-				dload(links.next, populate_container);
-			else
-				fullheight = false;
 
 		rcuNavigator.update();
 	}

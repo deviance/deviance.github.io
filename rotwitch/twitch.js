@@ -1,4 +1,4 @@
-function dload(file, handler)
+function dload(file, handler, options)
 {
 	var d = { client_id: "7zclzcxtiqcxfspf9ltnwztf8kvruwj" };
 	var g = queryParams().game;
@@ -10,7 +10,15 @@ function dload(file, handler)
 		url: file,
 		type: 'GET',
 		data: d,
-		success: handler
+		success: function(data){
+			handler(data);
+
+			if (options.fullheight)
+				if ($(window).height() >= $(document).height())
+					dload(data._links.next, handler, options);
+				else
+					options.fullheight = false;
+		}
 	});
 }
 

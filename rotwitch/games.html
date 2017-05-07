@@ -4,15 +4,12 @@
 	<!-- v1.4.3 has a working $(window).scrollTop() -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 	<script src="twitch.js"></script>
-	<script src="rcunav.js" charset="utf-8"></script>
+	<script src="rcunav.js"></script>
 	<script>
-
 	var links = {
 		self: "https://api.twitch.tv/kraken/games/top?offset=0&limit=13",
 		next: "https://api.twitch.tv/kraken/games/top?offset=13&limit=13"
 	};
-
-	var fullheight;
 
 	$(window).scroll(function ()
 	{
@@ -24,8 +21,7 @@
 
 	$(document).ready(function()
 	{
-		fullheight = true;
-		dload(links.self, populate_container);
+		dload(links.self, populate_container, { fullheight: true });
 	});
 
 	$(document).keydown(rcuNavigator.keydown_handler);
@@ -43,12 +39,6 @@
 			body.append(div);
 		})
 
-		if (fullheight)
-			if ($(window).height() >= $(document).height())
-				dload(links.next, populate_container);
-			else
-				fullheight = false;
-
 		rcuNavigator.update();
 	}
 
@@ -62,10 +52,8 @@
 		v+="</a>"
 		return v;
 	}
-
 	</script>
 	<style>
-
 	.container {
 		display:          block;
 		margin:           auto;
