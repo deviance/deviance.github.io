@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<!-- v1.4.3 has a working $(window).scrollTop() -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+	<script src="../rotwitch/twitch.js"></script>
+	<script>
+	var channel;
+
+	$(document).ready(function()
+	{
+		channel = queryParams().channel;
+
+		if (!channel)
+			return;
+
+		dload("https://cors-anywhere.herokuapp.com/https://api.twitch.tv/channels/" + channel + "/access_token",
+			get_m3u);
+	});
+
+	function get_m3u(access_token)
+	{
+		dload("https://cors-anywhere.herokuapp.com/http://usher.twitch.tv/api/channel/hls/" + channel + ".m3u8?player=twitchweb&allow_source=true&nauthsig=" + access_token.sig + "&nauth=" + encodeURIComponent(access_token.token),
+		function(response) { $("body").append(response); });
+	}
+	</script>
+</head>
+<body>
+
+</body>
+</html>
